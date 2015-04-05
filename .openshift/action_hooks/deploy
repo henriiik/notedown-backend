@@ -1,0 +1,4 @@
+source $OPENSHIFT_PYTHON_DIR/virtenv/venv/bin/activate
+
+echo "Executing 'python $OPENSHIFT_REPO_DIRnotedown/manage.py collectstatic --noinput'"
+python "$OPENSHIFT_REPO_DIR"notedown/manage.py collectstatic --noinput
