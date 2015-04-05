@@ -6,5 +6,4 @@ setup(name='Notedown',
       author='Henrik Rosén',
       author_email='henriiik@gmail.com',
       url='http://python-enhenrik.rhcloud.com/',
-      install_requires=['Django==1.8'],
       )
