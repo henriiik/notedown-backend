@@ -109,6 +109,6 @@ STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'wsgi', 'static')
 
 CORS_ORIGIN_WHITELIST = (
         'dev.enhenrik.nu:9000',
-        'nodejs-enhenrik.rhcloud.com',
         'frontend-enhenrik.rhcloud.com',
+        'frontend-henro843.openshift.ida.liu.se'
     )
