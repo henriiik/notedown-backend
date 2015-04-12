@@ -17,3 +17,22 @@ DATABASES = {
         'PORT': os.environ['OPENSHIFT_POSTGRESQL_DB_PORT'],
     }
 }
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.environ['OPENSHIFT_LOG_DIR'] + 'django.log',
+        },
+    },
+    'loggers': {
+        'django.request': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
