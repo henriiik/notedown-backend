@@ -7,5 +7,5 @@ class GoogleAuth(models.Model):
     google_user_id = models.CharField(max_length=100)
     expiration = models.DateTimeField()
     access_token = models.CharField(max_length=100)
-    id_token = models.CharField(max_length=100)
+    id_token = models.TextField()
     verified_email = models.BooleanField()
