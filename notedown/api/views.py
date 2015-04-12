@@ -51,8 +51,9 @@ class LoginView(APIView):
             auth_info = GoogleAuth.objects.get(
                 google_user_id=info_response['user_id'])
         except GoogleAuth.DoesNotExist:
-            user = User(email=info_response['email'],
-                        username=info_response['user_id'])
+            user, created = User.objects.get_or_create(
+                username=info_response['user_id'])
+            user.email = info_response['email']
             user.save()
             auth_info = GoogleAuth(
                 google_user_id=info_response['user_id'],
