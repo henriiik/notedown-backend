@@ -15,14 +15,8 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '22&rua7kr$y1@#%6-m*ka)k3t$mp25uqc!_n6#)*xs-2%9rl!6'
-
-# SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
 ALLOWED_HOSTS = []
@@ -38,7 +32,9 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
+    'api',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -112,3 +108,8 @@ CORS_ORIGIN_WHITELIST = (
         'frontend-enhenrik.rhcloud.com',
         'frontend-henro843.openshift.ida.liu.se'
     )
+
+# Google settings
+
+GOOGLE_CLIENT_ID = os.environ['GOOGLE_CLIENT_ID']
+GOOGLE_CLIENT_SECRET = os.environ['GOOGLE_CLIENT_SECRET']

@@ -1,6 +1,7 @@
 from notedown.settings import *
 
 DEBUG = False
+
 ALLOWED_HOSTS = [
     'backend-enhenrik.rhcloud.com',
     'backend-henro843.openshift.ida.liu.se'
