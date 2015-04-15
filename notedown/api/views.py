@@ -72,6 +72,15 @@ class LoginView(APIView):
         return Response({'token': token.key})
 
 
+class ErrorView(APIView):
+
+    def some_function(self):
+        raise Exception('OH NO!')
+
+    def get(self, request, format=None):
+        self.some_function()
+
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
