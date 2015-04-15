@@ -36,3 +36,11 @@ LOGGING = {
         },
     },
 }
+
+RAVEN_CONFIG = {
+    'dsn': os.environ['RAVEN_CONFIG_DSN'],
+}
+
+INSTALLED_APPS = INSTALLED_APPS + (
+    'raven.contrib.django.raven_compat',
+)
