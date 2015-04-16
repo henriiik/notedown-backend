@@ -3,8 +3,8 @@ import json
 import urllib.parse
 import urllib.request
 
-from api.models import GoogleAuth
-from api.serializers import UserSerializer
+from api.models import GoogleAuth, Note
+from api.serializers import UserSerializer, NoteSerializer
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -84,3 +84,8 @@ class ErrorView(APIView):
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = UserSerializer
     queryset = User.objects.all()
+
+
+class NoteViewSet(viewsets.ReadOnlyModelViewSet):
+    serializer_class = NoteSerializer
+    queryset = Note.objects.all()
