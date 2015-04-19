@@ -7,6 +7,7 @@ from api.models import GoogleAuth, Note
 from api.serializers import UserSerializer, NoteSerializer
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
@@ -89,3 +90,10 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
 class NoteViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = NoteSerializer
     queryset = Note.objects.all()
+
+    def get_queryset(self):
+        if self.request.user.is_authenticated():
+            return self.queryset.filter(
+                    Q(public=True) | Q(user=self.request.user)
+                )
+        return self.queryset.filter(public=True)

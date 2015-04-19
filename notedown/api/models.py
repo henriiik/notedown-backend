@@ -15,5 +15,8 @@ class Note(models.Model):
     user = models.ForeignKey(User)
     content = models.TextField()
     public = models.BooleanField(default=False)
-    create = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(auto_now_add=True)
     edited = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created"]
