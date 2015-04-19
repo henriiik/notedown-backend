@@ -9,6 +9,7 @@ class GoogleAuth(models.Model):
     access_token = models.CharField(max_length=100)
     id_token = models.TextField()
     verified_email = models.BooleanField()
+    url = models.CharField(max_length=200, blank=True)
 
 
 class Note(models.Model):

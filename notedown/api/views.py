@@ -16,32 +16,46 @@ from rest_framework.views import APIView
 from urllib.error import HTTPError
 
 
+def urlopen(url, data=None):
+    request = urllib.request.Request(url, data)
+    response = urllib.request.urlopen(request)
+    response = response.read()
+    response = response.decode('utf-8')
+    response = json.loads(response)
+    return response
+
+
+def post(url, data):
+    data = urllib.parse.urlencode(data).encode('utf-8')
+    return urlopen(url, data)
+
+
+def get(url, data):
+    data = urllib.parse.urlencode(data)
+    url = '{}?{}'.format(url, data)
+    return urlopen(url)
+
+
 class LoginView(APIView):
 
     def post(self, request, format=None):
         try:
             token_url = 'https://accounts.google.com/o/oauth2/token'
-            token_data = urllib.parse.urlencode({
+            token_data = {
                 'code': request.data['code'],
                 'client_id': settings.GOOGLE_CLIENT_ID,
                 'client_secret': settings.GOOGLE_CLIENT_SECRET,
                 'redirect_uri': 'postmessage',
-                'grant_type': 'authorization_code'
-                }).encode('utf-8')
-            token_request = urllib.request.Request(token_url, token_data)
-            token_response = urllib.request.urlopen(token_request)
-            token_response = token_response.read()
-            token_response = token_response.decode('utf-8')
-            token_response = json.loads(token_response)
+                'grant_type': 'authorization_code',
+                }
+            token_response = post(token_url, token_data)
             info_url = 'https://accounts.google.com/o/oauth2/tokeninfo'
-            info_data = urllib.parse.urlencode({
+            info_data = {
                 'access_token': token_response['access_token'],
-                }).encode('utf-8')
-            info_request = urllib.request.Request(info_url, info_data)
-            info_response = urllib.request.urlopen(info_request)
-            info_response = info_response.read()
-            info_response = info_response.decode('utf-8')
-            info_response = json.loads(info_response)
+                }
+            info_response = post(info_url, info_data)
+            profile_url = 'https://www.googleapis.com/plus/v1/people/me'
+            profile_response = get(profile_url, info_data)
         except HTTPError as e:
             error = e.read()
             error = error.decode('utf-8')
@@ -54,23 +68,33 @@ class LoginView(APIView):
         except GoogleAuth.DoesNotExist:
             user, created = User.objects.get_or_create(
                 username=info_response['user_id'])
-            user.email = info_response['email']
-            user.save()
             auth_info = GoogleAuth(
                 google_user_id=info_response['user_id'],
                 user=user
                 )
 
+        from pprint import pprint
+        pprint(profile_response)
+
+        auth_info.user.email = info_response['email']
+        auth_info.user.first_name = profile_response['name']['givenName']
+        auth_info.user.last_name = profile_response['name']['familyName']
+        auth_info.user.save()
+
         auth_info.access_token = token_response['access_token']
         auth_info.id_token = token_response['id_token']
         auth_info.verified_email = info_response['verified_email']
+        auth_info.url = profile_response.get('url', '')
         auth_info.expiration = (timezone.now() + datetime.timedelta(
             seconds=token_response['expires_in']))
         auth_info.save()
 
         token, created = Token.objects.get_or_create(user=auth_info.user)
 
-        return Response({'token': token.key})
+        return Response({
+            'token': token.key,
+            'userId': auth_info.user_id
+        })
 
 
 class ErrorView(APIView):
