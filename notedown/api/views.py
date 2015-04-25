@@ -11,6 +11,8 @@ from django.db.models import Q
 from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from urllib.error import HTTPError
@@ -111,9 +113,10 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
 
 
-class NoteViewSet(viewsets.ReadOnlyModelViewSet):
+class NoteViewSet(viewsets.ModelViewSet):
     serializer_class = NoteSerializer
     queryset = Note.objects.all()
+    permission_classes = (IsAuthenticatedOrReadOnly, )
 
     def get_queryset(self):
         if self.request.user.is_authenticated():
@@ -121,3 +124,16 @@ class NoteViewSet(viewsets.ReadOnlyModelViewSet):
                     Q(public=True) | Q(user=self.request.user)
                 )
         return self.queryset.filter(public=True)
+
+    def perform_create(self, serializer):
+        serializer.save(user_id=self.request.user.id)
+
+    def perform_update(self, serializer):
+        if not self.request.user.id == serializer.data['user']['id']:
+            raise PermissionDenied()
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        if not self.request.user.id == instance.user.id:
+            raise PermissionDenied()
+        instance.delete()
