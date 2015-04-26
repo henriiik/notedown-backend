@@ -119,11 +119,18 @@ class NoteViewSet(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticatedOrReadOnly, )
 
     def get_queryset(self):
+        queryset = self.queryset.all()
+
+        user = self.request.QUERY_PARAMS.get('user', None)
+        if user is not None:
+            queryset = queryset.filter(user=user)
+
         if self.request.user.is_authenticated():
-            return self.queryset.filter(
+            return queryset.filter(
                     Q(public=True) | Q(user=self.request.user)
                 )
-        return self.queryset.filter(public=True)
+
+        return queryset.filter(public=True)
 
     def perform_create(self, serializer):
         serializer.save(user_id=self.request.user.id)
