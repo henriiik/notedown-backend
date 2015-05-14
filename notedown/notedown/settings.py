@@ -113,6 +113,7 @@ REST_FRAMEWORK = {
 
 CORS_ORIGIN_WHITELIST = (
         'dev.enhenrik.nu:9000',
+        '127.0.0.1.xip.io:9000',
         'frontend-enhenrik.rhcloud.com',
         'frontend-henro843.openshift.ida.liu.se'
     )
